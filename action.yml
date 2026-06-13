@@ -1,0 +1,48 @@
+name: Unplug Agent Scan
+description: Scan changed agent and MCP config files in PRs with unplug-ai (regex-only Guard)
+author: UnplugAI
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  base-ref:
+    description: Base branch name for git diff (e.g. main or dev)
+    required: false
+    default: main
+  python-version:
+    description: Python version for the scan job
+    required: false
+    default: "3.12"
+  unplug-version:
+    description: PyPI version constraint for unplug-ai
+    required: false
+    default: ">=0.3.1"
+  fail-on-review:
+    description: When true, REVIEW actions fail the step (default only BLOCK/unsafe fail)
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+        version: "0.6.14"
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install unplug-ai from PyPI
+      shell: bash
+      run: uv pip install --system "unplug-ai${{ inputs.unplug-version }}"
+
+    - name: Scan changed agent files
+      shell: bash
+      env:
+        UNPLUG_FAIL_ON_REVIEW: ${{ inputs.fail-on-review }}
+      run: python -m unplug.cli.scan_pr --base-ref "${{ inputs.base-ref }}" --repo-root "$(git rev-parse --show-toplevel)"
