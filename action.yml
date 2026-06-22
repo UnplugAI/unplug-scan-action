@@ -17,11 +17,7 @@ inputs:
   unplug-version:
     description: PyPI version constraint for unplug-ai
     required: false
-    default: ">=0.3.1"
-  fail-on-review:
-    description: When true, REVIEW actions fail the step (default only BLOCK/unsafe fail)
-    required: false
-    default: "false"
+    default: ">=0.3.1,<0.4"
 
 runs:
   using: composite
@@ -39,10 +35,12 @@ runs:
 
     - name: Install unplug-ai from PyPI
       shell: bash
-      run: uv pip install --system "unplug-ai${{ inputs.unplug-version }}"
+      env:
+        UNPLUG_VERSION: ${{ inputs.unplug-version }}
+      run: uv pip install --system "unplug-ai${UNPLUG_VERSION}"
 
     - name: Scan changed agent files
       shell: bash
       env:
-        UNPLUG_FAIL_ON_REVIEW: ${{ inputs.fail-on-review }}
-      run: python -m unplug.cli.scan_pr --base-ref "${{ inputs.base-ref }}" --repo-root "$(git rev-parse --show-toplevel)"
+        BASE_REF: ${{ inputs.base-ref }}
+      run: python -m unplug.cli.scan_pr --base-ref "$BASE_REF" --repo-root "$(git rev-parse --show-toplevel)"

@@ -38,8 +38,7 @@ jobs:
 |-------|---------|-------------|
 | `base-ref` | `main` | Base branch for `git diff origin/<base-ref>...HEAD` |
 | `python-version` | `3.12` | Python version |
-| `unplug-version` | `>=0.3.1` | PyPI constraint for `unplug-ai` |
-| `fail-on-review` | `false` | Fail the job on `REVIEW` actions, not only `BLOCK` |
+| `unplug-version` | `>=0.3.1,<0.4` | PyPI constraint for `unplug-ai` |
 
 ## Monorepo / SDK development
 
