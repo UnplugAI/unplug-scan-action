@@ -1,5 +1,5 @@
 name: Unplug Agent Scan
-description: Scan changed agent and MCP config files in PRs with unplug-ai (regex-only Guard)
+description: Scan changed agent and MCP config files in PRs with unplug-ai (regex-only Guard). Use actions/checkout with fetch-depth: 0 so origin/<base-ref> exists.
 author: UnplugAI
 branding:
   icon: shield
