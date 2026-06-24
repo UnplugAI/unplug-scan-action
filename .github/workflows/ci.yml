@@ -29,7 +29,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install unplug-ai
-        run: python -m pip install "unplug-ai>=0.3.1,<0.4"
+        run: python -m pip install "unplug-ai>=0.4.0,<0.5"
 
       - name: Functional scanner fixture (--paths)
         run: |
