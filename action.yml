@@ -1,5 +1,5 @@
 name: Unplug Agent Scan
-description: Scan changed agent and MCP config files in PRs with unplug-ai (regex-only Guard). Use actions/checkout with fetch-depth: 0 so origin/<base-ref> exists.
+description: "Scan changed agent and MCP config files in PRs with unplug-ai (regex-only Guard). Use actions/checkout with fetch-depth: 0 so origin/<base-ref> exists."
 author: UnplugAI
 branding:
   icon: shield
@@ -23,13 +23,13 @@ runs:
   using: composite
   steps:
     - name: Set up uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
       with:
         enable-cache: true
         version: "0.6.14"
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -38,6 +38,18 @@ runs:
       env:
         UNPLUG_VERSION: ${{ inputs.unplug-version }}
       run: uv pip install --system "unplug-ai${UNPLUG_VERSION}"
+
+    # Fail closed if the base ref is missing (shallow checkout / wrong branch).
+    # Without this, the diff would be empty and the scan would silently pass.
+    - name: Verify base ref is available
+      shell: bash
+      env:
+        BASE_REF: ${{ inputs.base-ref }}
+      run: |
+        if ! git rev-parse --verify --quiet "origin/${BASE_REF}^{commit}" >/dev/null; then
+          echo "::error title=Unplug scan misconfigured::'origin/${BASE_REF}' not found. Check out with actions/checkout and 'fetch-depth: 0', and set 'base-ref' to the PR base branch (received '${BASE_REF}'). Refusing to scan an empty/incorrect diff."
+          exit 1
+        fi
 
     - name: Scan changed agent files
       shell: bash
