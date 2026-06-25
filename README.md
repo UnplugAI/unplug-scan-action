@@ -54,7 +54,7 @@ If you develop the SDK in the same repo, use the composite action in [UnplugAI/U
 ## Local CLI
 
 ```bash
-pip install "unplug-ai>=0.4.0"
+pip install "unplug-ai>=0.4.0,<0.5"
 unplug-scan-pr --base-ref main
 ```
 
